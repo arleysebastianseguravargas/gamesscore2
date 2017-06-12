@@ -1,10 +1,15 @@
-import cherrypy,os
+import cherrypy, os
+from generador import Generador
 
 
 class goodAndDevil(object):
     @cherrypy.expose
     def index(self):
-        return """
+        m = open("public/datos.csv", "r")
+
+        miGenerador = Generador()
+
+        tabla = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,6 +19,8 @@ class goodAndDevil(object):
     <meta name="description" content="">
     <meta name="author" content="">
     <title>G&D</title>
+
+    <link href="static/css/student.css" rel="stylesheet">
     <link href="static/css/bootstrap.min.css" rel="stylesheet">
     <link href="static/css/stylish-portfolio.css" rel="stylesheet">
     <link href="static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -52,6 +59,7 @@ class goodAndDevil(object):
                         <h2>Stylish Portfolio is the perfect theme for your next project!</h2>
                         <p class="lead">This theme features some wonderful photography courtesy of <a target="_blank" href="http://join.deathtothestockphoto.com/">Death to the Stock Photo</a>.</p>
                     </div>
+                    [C1]
                 </div>
                 <!-- /.row -->
             </div>
@@ -94,6 +102,7 @@ $(function() {
         }
     });
 });
+
 //#to-top button appears after scrolling
 var fixed = false;
 $(document).scroll(function() {
@@ -147,6 +156,8 @@ $('.map').on('click', onMapClickHandler);
 
 
 """
+        return tabla.replace('[C1]', miGenerador.generaTabla(m))
+
 
 if __name__ == '__main__':
     conf = {
@@ -159,6 +170,6 @@ if __name__ == '__main__':
             'tools.staticdir.dir': './public'
         }
     }
-    cherrypy.config.update({'server.socket_host': '0.0.0.0', })
+    cherrypy.config.update({'server.socket_host': '127.0.0.1', })
     cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '5000')), })
     cherrypy.quickstart(goodAndDevil(), '/', conf)
